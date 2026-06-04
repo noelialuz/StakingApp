@@ -71,11 +71,17 @@ contract StakingApp is Ownable {
         uint256 elapsePeriod_ = block.timestamp - elapsePeriod[msg.sender];
         require(elapsePeriod_ >= stakingPeriod, "Need to wait");
 
+        uint256 periodsEarned = elapsePeriod_ / stakingPeriod;
+        uint256 totalReward = periodsEarned * rewardPerPeriod;
+
         // 3. Update state
-        elapsePeriod[msg.sender] = block.timestamp;
+        //elapsePeriod[msg.sender] = block.timestamp;
+        elapsePeriod[msg.sender] += periodsEarned * stakingPeriod;
 
         // 4. Transfer rewards
-        (bool success,) = msg.sender.call{value: rewardPerPeriod}("");
+        //(bool success,) = msg.sender.call{value: rewardPerPeriod}("");
+        //require(success, "Transfer failed");
+        (bool success,) = msg.sender.call{value: totalReward}("");
         require(success, "Transfer failed");
     }
 
